@@ -34,11 +34,11 @@
 
 - star和watch substrate和polkadot的repo，并截屏
 
-  
+  ![pic](https://github.com/seikensk/pic2/blob/master/%E6%8D%95%E8%8E%B7.PNG)
 
 - fork substrate到自己的repo，并给自己的repo提一个issue和PR，并截屏
 
-
+  ![pic](https://github.com/seikensk/pic2/blob/master/dddddd%20213651.png)
 
 
 
@@ -46,9 +46,11 @@
 
 **请编译第一节课中的node-template并截图编译成功的界面** (node-template链接： https://github.com/SubstrateCourse/substrate-node-template.git)
 
-
+  ![pic](https://github.com/seikensk/pic2/blob/master/build%20finished.png)
 
 #### 第四题
 
 **请运行node-template节点并截图 ，单节点和多节点分别截图（ (node-template链接： https://github.com/SubstrateCourse/substrate-node-template.git)）**
 
+  ![pic](https://github.com/seikensk/pic2/blob/master/dev.png)
+  ![pic](https://github.com/seikensk/pic2/blob/master/duo2.png)
