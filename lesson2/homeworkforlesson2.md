@@ -10,6 +10,7 @@
 4. 附加题不是必答的，但可以酌情加分。
 
   ![pic](https://github.com/seikensk/pic2/blob/master/%E8%BF%90%E8%A1%8C8.png)
+  
 **第一题：实现存证模块的功能，包括：**
 
 * 创建存证，可调用函数所接收参数为内容的哈希值 Vec<u8>；
