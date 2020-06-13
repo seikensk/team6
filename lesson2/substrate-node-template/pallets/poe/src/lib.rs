@@ -4,8 +4,15 @@
 
 
 
-use frame_support::{decl_module, decl_storage, decl_event, decl_error, dispatch,ensure,traits::{Get},};
+
+use frame_support::{
+	decl_module, decl_storage, decl_event, decl_error, dispatch, ensure,
+	traits::{Get},
+};
+
+
 use frame_system::{self as system, ensure_signed};
+
 use sp_std::prelude::*;
 use sp_runtime::traits::StaticLookup;
 
@@ -30,7 +37,7 @@ decl_storage! {
 	// It is important to update your storage name so that your pallet's
 	// storage items are isolated from other pallets.
 	// ---------------------------------vvvvvvvvvvvvvv
-	trait Store for Module<T: Trait> as TemplateModule {
+	trait Store for Module<T: Trait> as PoeModule {
 		Proofs get(fn proofs ): map hasher(blake2_128_concat)Vec<u8> => (T::AccountId, T::BlockNumber);
 	}
 }
@@ -100,14 +107,14 @@ decl_module! {
 		}
 
 		#[weight = 0]
-		pub fn transfer_claim(origin,claim: Vec<u8>,dest:<T::Lookup as Staticlookup>::Source) -> dispatch::DispatchResult {
+		pub fn transfer_claim(origin,claim: Vec<u8>,dest:<T::Lookup as StaticLookup>::Source) -> dispatch::DispatchResult {
 			let sender = ensure_signed(origin)?;
 
 			ensure!(Proofs::<T>::contains_key(&claim), Error::<T>::ClaimNotExist);
 
 			let (owner, _block_number) = Proofs::<T>::get(&claim);
 
-			ensure!(owner == sender, Error::<T>::NotClaimOwner);
+			ensure!(owner == sender, Error::<T>::NotclaimOwner);
 
 			let dest = T::Lookup::lookup(dest)?;
 
@@ -115,7 +122,7 @@ decl_module! {
 
 
 
-			Ok(());
+			Ok(())
 		}
 		
 	}

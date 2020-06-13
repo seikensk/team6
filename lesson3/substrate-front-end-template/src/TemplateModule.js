@@ -3,6 +3,7 @@ import { Form, Input, Grid, Card, Statistic } from 'semantic-ui-react';
 
 import { useSubstrate } from './substrate-lib';
 import { TxButton } from './substrate-lib/components';
+import { blake2AsHex } from '@polkadot/util-crypto';
 
 function Main (props) {
   const { api } = useSubstrate();
@@ -10,72 +11,92 @@ function Main (props) {
 
   // The transaction submission status
   const [status, setStatus] = useState('');
-
-  // The currently stored value
-  const [currentValue, setCurrentValue] = useState(0);
-  const [formValue, setFormValue] = useState(0);
+  const [digest, setDigest] = useState('');
+  const [owner, setOwner] = useState('');
+  const [blockNumber,setBlockNumber] = useState(0);
 
   useEffect(() => {
     let unsubscribe;
-    api.query.templateModule.something(newValue => {
-      // The storage value is an Option<u32>
-      // So we have to check whether it is None first
-      // There is also unwrapOr
-      if (newValue.isNone) {
-        setCurrentValue('<None>');
-      } else {
-        setCurrentValue(newValue.unwrap().toNumber());
-      }
+    api.query.poeModule.proofs(digest,(result)=>{
+     setOwner(result[0].toString());
+     setBlockNumber(result[1].toNumber());
     }).then(unsub => {
       unsubscribe = unsub;
     })
       .catch(console.error);
 
     return () => unsubscribe && unsubscribe();
-  }, [api.query.templateModule]);
+  }, [digest,api.query.PoeModule]);
+
+  const handleFileChosen = (file) => {
+    let fileReader = new FileReader();
+
+    const bufferToDigest = () =>{
+      const content = Array.from(new Uint8Array(fileReader.result))
+        .map((b) => b.toString(16).padStart(2,'0'))
+        .join('');
+      
+      const hash = blake2AsHex(content,256);
+      setDigest(hash);  
+        
+    }
+
+    fileReader.onloadend = bufferToDigest;
+
+    fileReader.readAsArrayBuffer(file);
+
+  }
 
   return (
     <Grid.Column width={8}>
-      <h1>Template Module</h1>
-      <Card centered>
-        <Card.Content textAlign='center'>
-          <Statistic
-            label='Current Value'
-            value={currentValue}
-          />
-        </Card.Content>
-      </Card>
+      <h1>Proof of Existence Module</h1>
       <Form>
-        <Form.Field>
+        <form.Field>
           <Input
-            label='New Value'
-            state='newValue'
-            type='number'
-            onChange={(_, { value }) => setFormValue(value)}
+          type='file'
+          id ='file'
+          label='Your File'
+          onChange={(e) => handleFileChosen(e.target.files(0))}
           />
-        </Form.Field>
-        <Form.Field style={{ textAlign: 'center' }}>
+        </form.Field>
+
+        <form.Field>
           <TxButton
             accountPair={accountPair}
-            label='Store Something'
-            type='SIGNED-TX'
+            label='Create Claim'
             setStatus={setStatus}
+            type='SIGNED-TX'
             attrs={{
-              palletRpc: 'templateModule',
-              callable: 'doSomething',
-              inputParams: [formValue],
+              palletRpc: 'poeModule',
+              callable: 'createClaim',
+              inputParams: [digest],
               paramFields: [true]
             }}
-          />
-        </Form.Field>
-        <div style={{ overflowWrap: 'break-word' }}>{status}</div>
+          />  
+
+          <TxButton
+             accountPair={accountPair}
+             label='Revoke claim'
+             setStatus={setStatus}
+             type='SIGNED-TX'
+             attrs={{
+               palletRpc: 'poeModule',
+               callable: 'invokeClaim',
+               inputParams: [digest],
+               paramFields: [true]
+             }}
+            /> 
+        </form.Field>
+
+      <div>{status}</div>
+      <div>{'Claim info, owner: ${owner},BlockNumber:${BlockNumber}'}</div>
       </Form>
     </Grid.Column>
   );
 }
 
-export default function TemplateModule (props) {
+export default function PoeModule (props) {
   const { api } = useSubstrate();
-  return (api.query.templateModule && api.query.templateModule.something
+  return (api.query.PoeModule && api.query.PoeeModule.proofs
     ? <Main {...props} /> : null);
 }
