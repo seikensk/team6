@@ -105,7 +105,7 @@ fn revoke_claim_failed_with_wrong_owner(){
 
 
 /*
-SS#[test]
+#[test]
 fn transfer_claim_work () {
 	new_test_ext().execute_with(||{
 		let claim = vec![0,1];
