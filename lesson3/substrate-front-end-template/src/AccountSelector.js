@@ -24,6 +24,7 @@ function Main (props) {
     value: account.address,
     text: account.meta.name.toUpperCase(),
     icon: 'user'
+    
   }));
 
   const initialAddress =
