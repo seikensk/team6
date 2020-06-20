@@ -23,7 +23,10 @@ function Main (props) {
     key: account.address,
     value: account.address,
     text: account.meta.name.toUpperCase(),
-    icon: 'user'
+    icon: 'user',
+    timestamp: account.meta.timestamp(),
+    comment: account.meta.comment(),
+    timestamp: account.meta.timestamp
     
   }));
 
